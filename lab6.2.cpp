@@ -1,53 +1,93 @@
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
 #include <iomanip>
+#include <ctime>
+#include <cstdlib>
 
 using namespace std;
+int* create(int n, const int Low, const int High, int* a = 0, int i = 0)
+{
+    if (a == 0)
+    {
+        a = new int[n];
+    }
 
-void Generate(int a[], int n) {
-    for (int i = 0; i < n; i++) {
-        a[i] = rand() %201 - 100;
+    if (i < n)
+    {
+        a[i] = Low + rand() % (High - Low + 1);
+        create(n, Low, High, a, i + 1);
+    }
+
+    return a;
+}
+
+int Max(int* a, const int size, int i, int max)
+{
+    if (a[i] > max)
+        max = a[i];
+    if (i < size - 1)
+        return Max(a, size, i + 1, max);
+    else
+        return max;
+}
+
+int Min(int* a, const int size, int i, int min)
+{
+    if (a[i] < min)
+        min = a[i];
+    if (i < size - 1)
+        return Min(a, size, i + 1, min);
+    else
+        return min;
+}
+int MaxIndex(int* a, const int size, int i, int maxIndex)
+{
+    if (a[i] > a[maxIndex])
+        maxIndex = i;
+    if (i < size - 1)
+        return MaxIndex(a, size, i + 1, maxIndex);
+    else
+        return maxIndex;
+}
+
+int MinIndex(int* a, const int size, int i, int minIndex)
+{
+    if (a[i] < a[minIndex])
+        minIndex = i;
+    if (i < size - 1)
+        return MinIndex(a, size, i + 1, minIndex);
+    else
+        return minIndex;
+}
+
+void print(int* a, int n, int i = 0) {
+    if (i < n) {
+        cout << setw(5) << a[i];
+        print(a, n, i + 1);
+    }
+    else {
+        cout << endl;
     }
 }
 
-void Print(int a[], int n) {
-    for (int i = 0; i < n ; i++) {
-        cout << setw(4) << a[i] << " ";
-    }
-}
+int main()
+{
+    int n;
+    cout << "Enter the size: ";
+    cin >> n;
 
-void findMinMaxIndices(int a[], int n, int& minIndex, int& maxIndex) {
-    if (n <= 0) {
-        minIndex = -1;
-        maxIndex = -1;
-    }
-    int minElement = a[0];
-    int maxElement = a[0];
-    minIndex = 0;
-    maxIndex = 0;
-        
+    srand(static_cast<unsigned>(time(NULL)));
+    int Low = 1;
+    int High = 100;
 
-        for (int i = 1; i < n; i++) {
-            if (a[i] < minElement) {
-                minElement = a[i];
-                minIndex = i;
-            }
-            if (a[i] > maxElement) {
-                maxElement = a[i];
-                maxIndex = i;
-            }
-        }
-    }
-int main() {
-    int a[] = {12, 3, 5, 78, 34, 54, 65 };
-    int n = sizeof(a) / sizeof(a[0]);
+    int* a = create(n, Low, High);
+    print(a, n);
 
-    int minIndex, maxIndex;
-    findMinMaxIndices(a, n, minIndex, maxIndex);
+    cout << "MaxIndex = " << MaxIndex(a, n, 0, 0) << endl;
+    cout << "MinIndex = " << MinIndex(a, n, 0, 0) << endl;
+    cout << "Max = " << Max(a, n, 0, a[0]) << endl;
+    cout << "Min = " << Min(a, n, 0, a[0]) << endl;
 
-    if (minIndex != -1 && maxIndex != -1) {
-        std::cout << "MinIndex =  " << minIndex << std::endl;
-        std::cout << "MaxIndex =  " << maxIndex << std::endl;
-    }
+    delete[] a; // Звільнення пам'яті
+
+    return 0;
 }
